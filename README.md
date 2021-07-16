@@ -1,5 +1,9 @@
 # node-raspberry-pi-camera-native
 
+- Forked to release a fixed version for the 'callback is not defined' issue.
+- All dependencies have also been updated.
+- This package name is @zebrajaeger/node-raspberry-pi-camera-native
+
 Use your [Raspberry Pi Camera Module](https://www.raspberrypi.org/documentation/hardware/camera/README.md) with [Node.js](https://nodejs.org)
 
 **NOTE:** Currently only supports still image capture.
