@@ -14,6 +14,7 @@ Napi::Object RaspberryPiCamera::Init(Napi::Env env, Napi::Object exports) {
 
   Napi::Function func = DefineClass(env, "RaspberryPiCamera", {
     InstanceMethod("start", &RaspberryPiCamera::Start),
+    InstanceMethod("setConfig", &RaspberryPiCamera::SetConfig),
     InstanceMethod("pause", &RaspberryPiCamera::Pause),
     InstanceMethod("resume", &RaspberryPiCamera::Resume),
     InstanceMethod("stop", &RaspberryPiCamera::Stop)
@@ -84,7 +85,9 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo& info) {
   this->_asyncHandle = new uv_async_t;
 
   uv_async_init(uv_default_loop(), this->_asyncHandle, (uv_async_cb)RaspberryPiCamera::AsyncCallback);
+printf("-> init87 ");
   uv_mutex_init(&this->_bufferQueueMutex);
+printf("<-\n");
 
   this->_asyncHandle->data = this;
 
@@ -208,6 +211,7 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo& info) {
   }
 
   // create buffer pool
+  printf("mmal_port_pool_create %d %d\n", _encoder->output[0]->buffer_num, _encoder->output[0]->buffer_size);
   _bufferPool = mmal_port_pool_create(_encoder->output[0], _encoder->output[0]->buffer_num, _encoder->output[0]->buffer_size);
   if (!_bufferPool) {
     mmal_component_disable(_encoder);
@@ -284,6 +288,30 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo& info) {
   return env.Undefined();
 }
 
+Napi::Value RaspberryPiCamera::SetConfig(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  Napi::HandleScope scope(env);
+
+  int length = info.Length();
+
+  _quality = 75;
+
+  if (length > 0 && info[0].IsObject()) {
+    Napi::Object options = info[0].ToObject();
+
+    if (options.Has("quality") && options.Get("quality").IsNumber()) {
+      _quality = options.Get("quality").ToNumber().Int32Value();
+printf("SetConfig.quality: %d\n", _quality);
+
+      if (mmal_port_parameter_set_uint32(_encoder->output[0], MMAL_PARAMETER_JPEG_Q_FACTOR, _quality) != MMAL_SUCCESS) {
+        Napi::TypeError::New(env, "Failed to set encoder JPEG quality factor!").ThrowAsJavaScriptException();
+        return env.Undefined();
+      }
+    }
+  }
+  return env.Undefined();
+}
+
 Napi::Value RaspberryPiCamera::Pause(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
@@ -318,13 +346,17 @@ Napi::Value RaspberryPiCamera::Stop(const Napi::CallbackInfo& info) {
   mmal_component_destroy(_camera);
 
   uv_close((uv_handle_t*)this->_asyncHandle, (uv_close_cb)RaspberryPiCamera::AsyncCloseCallback);
+printf("-> destroy323");
   uv_mutex_destroy(&this->_bufferQueueMutex);
+printf("<-\n");
 
   return env.Undefined();
 }
 
 void RaspberryPiCamera::_processBufferQueue() {
+//printf("-> lock329 ");
   uv_mutex_lock(&this->_bufferQueueMutex);
+//printf("<-\n");
 
   Napi::Env env = this->Env();
   Napi::HandleScope scope(env);
@@ -340,7 +372,9 @@ void RaspberryPiCamera::_processBufferQueue() {
     mmal_port_send_buffer(_encoder->output[0], buffer);
   }
 
+//printf("-> unlock347 ");
   uv_mutex_unlock(&this->_bufferQueueMutex);
+//printf("<-\n");
 }
 
 void RaspberryPiCamera::AsyncCallback(uv_async_t* handle)
@@ -362,9 +396,13 @@ void RaspberryPiCamera::CameraControlCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEA
 void RaspberryPiCamera::BufferCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer) {
   RaspberryPiCamera* raspberryPiCamera = (RaspberryPiCamera*)port->userdata;
 
+//printf("-> lock371 ");
   uv_mutex_lock(&raspberryPiCamera->_bufferQueueMutex);
+//printf("<-\n");
   raspberryPiCamera->_bufferQueue.push(buffer);
+//printf("-> unlock375 ");
   uv_mutex_unlock(&raspberryPiCamera->_bufferQueueMutex);
+//printf("<-\n");
 
   uv_async_send(raspberryPiCamera->_asyncHandle);
 }

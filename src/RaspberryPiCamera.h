@@ -17,6 +17,7 @@ public:
   RaspberryPiCamera(const Napi::CallbackInfo& info);
 
   Napi::Value Start(const Napi::CallbackInfo& info);
+  Napi::Value SetConfig(const Napi::CallbackInfo& info);
   Napi::Value Pause(const Napi::CallbackInfo& info);
   Napi::Value Resume(const Napi::CallbackInfo& info);
   Napi::Value Stop(const Napi::CallbackInfo& info);
