@@ -4,7 +4,7 @@
 
 const http = require('http');
 
-const raspberryPiCamera = require('../index'); // or require('raspberry-pi-camera-native');
+const raspberryPiCamera = require('../index'); // or require(pi-camera-native-ts);
 
 raspberryPiCamera.start({
   width: 1280,

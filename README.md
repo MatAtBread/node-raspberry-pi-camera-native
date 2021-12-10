@@ -21,14 +21,14 @@ Use your [Raspberry Pi Camera Module](https://www.raspberrypi.org/documentation/
 ## Install
 
 ```
-npm install raspberry-pi-camera-native
+npm install pi-camera-native-ts
 ```
 
 ## Usage
 
 ```javascript
 // require module
-const raspberryPiCamera = require('raspberry-pi-camera-native');
+const raspberryPiCamera = require(pi-camera-native-ts);
 
 // add frame data event listener
 raspberryPiCamera.on('frame', (frameData) => {

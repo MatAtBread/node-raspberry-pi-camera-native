@@ -1,5 +1,5 @@
 {
-  "name": "raspberry-pi-camera-native",
+  "name": "pi-camera-native-ts",
   "version": "0.0.2",
   "description": "Use your Raspberry Pi Camera Module with Node.js",
   "main": "index.js",
