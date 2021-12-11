@@ -17,6 +17,7 @@ public:
   RaspberryPiCamera(const Napi::CallbackInfo& info);
 
   Napi::Value Start(const Napi::CallbackInfo& info);
+  Napi::Value IsPaused(const Napi::CallbackInfo& info);
   Napi::Value SetConfig(const Napi::CallbackInfo& info);
   Napi::Value Pause(const Napi::CallbackInfo& info);
   Napi::Value Resume(const Napi::CallbackInfo& info);
@@ -26,6 +27,7 @@ private:
   static Napi::FunctionReference constructor;
 
   void _processBufferQueue();
+  bool _isActive();
 
   static void AsyncCallback(uv_async_t* handle);
   static void AsyncCloseCallback(uv_async_t* handle);
@@ -43,6 +45,7 @@ private:
   int _fps;
   MMAL_FOURCC_T _encoding;
   int _quality;
+  int _paused;
 
   uv_async_t* _asyncHandle;
   uv_mutex_t _bufferQueueMutex;

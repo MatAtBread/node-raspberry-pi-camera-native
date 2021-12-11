@@ -8,6 +8,7 @@ interface RaspberryPiCamera extends EventEmitter {
   stop(): Promise<void>;
 
   get running(): boolean;
+  nextFrame(): Promise<Buffer>;
 
   // Overloads EventEmitter
   on(event: 'frame', listener: (frame:Buffer) => void): this;
