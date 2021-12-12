@@ -1,6 +1,6 @@
 {
-  "name": "@zebrajaeger/raspberry-pi-camera-native",
-  "version": "0.0.1",
+  "name": "pi-camera-native-ts",
+  "version": "0.0.2",
   "description": "Use your Raspberry Pi Camera Module with Node.js",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/zebrajaeger/node-raspberry-pi-camera-native.git"
+    "url": "https://github.com/MatAtBread/node-raspberry-pi-camera-native.git"
   },
   "keywords": [
     "Raspberry Pi",
@@ -23,10 +23,10 @@
   "bugs": {
     "url": "https://github.com/sandeepmistry/node-raspberry-pi-camera-native/issues"
   },
-  "homepage": "https://github.com/zebrajaeger/node-raspberry-pi-camera-native",
+  "homepage": "https://github.com/MatAtBread/node-raspberry-pi-camera-native",
   "dependencies": {
     "bindings": "^1.5.0",
-    "node-addon-api": "^4.0.0"
+    "node-addon-api": "^4.2.0"
   },
   "devDependencies": {
     "node-gyp": "^8.1.0"
@@ -36,5 +36,6 @@
   },
   "os": [
     "linux"
-  ]
+  ],
+  "types": "./index.d.ts"
 }

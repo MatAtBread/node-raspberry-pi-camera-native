@@ -4,7 +4,7 @@
 
 const fs = require('fs');
 
-const raspberryPiCamera = require('../index'); // or require('raspberry-pi-camera-native');
+const raspberryPiCamera = require('../index'); // or require(pi-camera-native-ts);
 
 let count = 0;
 
