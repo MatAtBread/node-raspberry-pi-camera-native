@@ -1,11 +1,10 @@
 {
   "name": "pi-camera-native-ts",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Use your Raspberry Pi Camera Module with Node.js",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "npm publish --access public"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -16,12 +15,13 @@
     "Raspberry",
     "Pi",
     "Camera",
-    "native"
+    "native",
+    "Typescript"
   ],
-  "author": "Sandeep Mistry",
+  "author": "MatAtBread",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sandeepmistry/node-raspberry-pi-camera-native/issues"
+    "url": "https://github.com/MatAtBread/node-raspberry-pi-camera-native/issues"
   },
   "homepage": "https://github.com/MatAtBread/node-raspberry-pi-camera-native",
   "dependencies": {
@@ -32,7 +32,7 @@
     "node-gyp": "^8.1.0"
   },
   "engines": {
-    "node": ">=8.0"
+    "node": ">=12.0"
   },
   "os": [
     "linux"
