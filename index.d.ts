@@ -2,10 +2,10 @@ import { EventEmitter } from 'events';
 
 interface RaspberryPiCamera extends EventEmitter {
   start(options: CameraOptions): Promise<void>;
-  setConfig(options: CameraOptions): Promise<void>;
-  pause(): Promise<void>;
-  resume(): Promise<void>;
   stop(): Promise<void>;
+  setConfig(options: CameraOptions): Promise<void>; // Currently only "quality" can be changed while the preview is running
+  pause(): Promise<void>; // Note: the preview stream can't be paused or resumed. Use start and stop
+  resume(): Promise<void>; // Note: the preview stream can't be paused or resumed. Use start and stop
 
   get running(): boolean;
   nextFrame(): Promise<Buffer>;

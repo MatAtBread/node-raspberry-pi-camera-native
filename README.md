@@ -1,12 +1,12 @@
 # node-raspberry-pi-camera-native
 
-- Forked to release a fixed version for the 'callback is not defined' issue.
+- Forked to with fixes around buffer allocation, re-entrancy and menory-leak fixes
+- Includes Typescript type definitions
 - All dependencies have also been updated.
-- This package name is @zebrajaeger/node-raspberry-pi-camera-native
 
 Use your [Raspberry Pi Camera Module](https://www.raspberrypi.org/documentation/hardware/camera/README.md) with [Node.js](https://nodejs.org)
 
-**NOTE:** Currently only supports still image capture.
+**NOTE:** Currently only supports still image capture with live preview
 
 ## Prerequisites
 
@@ -40,64 +40,22 @@ raspberryPiCamera.on('frame', (frameData) => {
 raspberryPiCamera.start();
 ```
 
-### Events
-
-#### Data
-
-Listen for raw data events (partial frame data), `data` is a [Node.js Buffer](https://nodejs.org/dist/latest/docs/api/buffer.html)
-
-```javascript
-raspberryPiCamera.on('data', callback(data));
-```
-
-#### Frame
-
-Listen for frame events (full frame data), `frameData` is a [Node.js Buffer](https://nodejs.org/dist/latest/docs/api/buffer.html)
-
-```javascript
-raspberryPiCamera.on('frame', callback(frameData));
-```
-
-### Actions
-
-#### Start Capture
-
-```javascript
-raspberryPiCamera.start(options, callback);
-```
-
-Options is a object, with the following defaults:
-```javascript
-{
-  width: 1280,
-  height: 720,
-  fps: 30,
+```Typescript
+import camera from 'pi-camera-native-ts';
+....
+await camera.start({
+  width: 1920,
+  height: 1080,
+  fps: 20,
   encoding: 'JPEG',
-  quality: 75
-}
+  quality: 7
+});
+
+const jpegData = await camera.nextFrame();
+
+await camera.stop();
 ```
 
-Supported values:
- * `width`: `32` to `2592` (v1 camera) or `3280` (v2 camera)
- * `height`: `16` to `1944` (v1 camera) or `2464` (v2 camera)
- * `fps`: `1` to `90`
- * `encoding`: `'JPEG'` (hardware accelerated), `'GIF'`, `'PNG'`, `'PPM'`, `'TGA'`, `'BMP'` (see [mmal_encodings.h](https://github.com/raspberrypi/userland/blob/master/interface/mmal/mmal_encodings.h) for others)
- * `quality`: 1 - 100 (JPEG encoding quality)
+### API
 
-#### Pause Capture
-
-```javascript
-raspberryPiCamera.pause(callback);
-```
-
-#### Resume Capture
-
-```javascript
-raspberryPiCamera.resume(callback);
-```
-
-#### Stop Capture
-
-```javascript
-raspberryPiCamera.stop(callback);
-```
+See the [index.d.ts](./index.d.ts) for the full API.
