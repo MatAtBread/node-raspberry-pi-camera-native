@@ -11,7 +11,7 @@ Napi::FunctionReference RaspberryPiCamera::constructor;
 
 static Napi::Value exception(Napi::Env env, std::string message, int result)
 {
-  printf("\n ** exception ** %s %d", message.c_str(), result);
+  printf("** exception ** %s %d\n", message.c_str(), result);
   Napi::TypeError::New(env, message).ThrowAsJavaScriptException();
   return env.Undefined();
 }
@@ -56,7 +56,7 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
   Napi::Env env = info.Env();
   if (_isActive())
     return exception(env, "Camera already active");
-    
+
   Napi::HandleScope scope(env);
 
   int length = info.Length();
@@ -123,7 +123,6 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
   {
     // Camera doesn't have output ports
     mmal_component_destroy(_camera);
-    printf("\n%d :Destroy camera", __LINE__);
     _camera = NULL;
     return exception(env, "Camera has no output ports!");
   }
@@ -133,7 +132,6 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
   {
     // Unable to enable control port
     mmal_component_destroy(_camera);
-    printf("\n%d :Destroy camera", __LINE__);
     _camera = NULL;
     return exception(env, "Failed to enable camera control!");
   }
@@ -157,7 +155,6 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
   if (mmal_port_parameter_set(_camera->control, &cameraConfig.hdr) != MMAL_SUCCESS)
   {
     mmal_component_destroy(_camera);
-    printf("\n%d :Destroy camera", __LINE__);
     _camera = NULL;
     return exception(env, "Failed to set camera config!");
   }
@@ -178,7 +175,6 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
   {
     // Couldn't set video port format
     mmal_component_destroy(_camera);
-    printf("\n%d :Destroy camera", __LINE__);
     _camera = NULL;
     return exception(env, "Failed to set camera format!");
   }
@@ -188,7 +184,6 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
   {
     // Couldn't enable camera
     mmal_component_destroy(_camera);
-    printf("\n%d :Destroy camera", __LINE__);
     _camera = NULL;
     return exception(env, "Failed to enable camera capture!");
   }
@@ -198,7 +193,6 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
   {
     mmal_component_disable(_camera);
     mmal_component_destroy(_camera);
-    printf("\n%d :Destroy camera", __LINE__);
     _camera = NULL;
     return exception(env, "Failed to create image encoder!");
   }
@@ -215,7 +209,6 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
     mmal_component_disable(_camera);
     mmal_component_destroy(_encoder);
     mmal_component_destroy(_camera);
-    printf("\n%d :Destroy camera", __LINE__);
     _camera = NULL;
     return exception(env, "Failed to set encoder format!");
   }
@@ -225,7 +218,6 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
     mmal_component_disable(_camera);
     mmal_component_destroy(_encoder);
     mmal_component_destroy(_camera);
-    printf("\n%d :Destroy camera", __LINE__);
     _camera = NULL;
     return exception(env, "Failed to set encoder JPEG quality factor!");
   }
@@ -235,7 +227,6 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
     mmal_component_disable(_camera);
     mmal_component_destroy(_encoder);
     mmal_component_destroy(_camera);
-    printf("\n%d :Destroy camera", __LINE__);
     _camera = NULL;
     return exception(env, "Failed to set encoder JPEG restart interval!");
   }
@@ -246,7 +237,6 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
     mmal_component_disable(_camera);
     mmal_component_destroy(_encoder);
     mmal_component_destroy(_camera);
-    printf("\n%d :Destroy camera", __LINE__);
     _camera = NULL;
     return exception(env, "Failed to enable encoder!");
   }
@@ -259,7 +249,6 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
     mmal_component_disable(_camera);
     mmal_component_destroy(_encoder);
     mmal_component_destroy(_camera);
-    printf("\n%d :Destroy camera", __LINE__);
     _camera = NULL;
     return exception(env, "Failed to create buffer pool!");
   }
@@ -271,7 +260,6 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
     mmal_component_disable(_camera);
     mmal_component_destroy(_encoder);
     mmal_component_destroy(_camera);
-    printf("\n%d :Destroy camera", __LINE__);
     _camera = NULL;
     return exception(env, "Failed to create camera encoder connection!");
   }
@@ -284,7 +272,6 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
     mmal_component_disable(_camera);
     mmal_component_destroy(_encoder);
     mmal_component_destroy(_camera);
-    printf("\n%d :Destroy camera", __LINE__);
     _camera = NULL;
     return exception(env, "Failed to enable camera encoder connection!");
   }
@@ -300,7 +287,6 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
     mmal_component_disable(_camera);
     mmal_component_destroy(_encoder);
     mmal_component_destroy(_camera);
-    printf("\n%d :Destroy camera", __LINE__);
     _camera = NULL;
     return exception(env, "Failed to enable encoder output port!");
   }
@@ -320,7 +306,7 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
       mmal_component_disable(_camera);
       mmal_component_destroy(_encoder);
       mmal_component_destroy(_camera);
-      printf("\n%d :Destroy camera", __LINE__);
+
       _camera = NULL;
       return exception(env, "Failed to get buffer from pool!");
     }
@@ -332,13 +318,13 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
       mmal_component_disable(_camera);
       mmal_component_destroy(_encoder);
       mmal_component_destroy(_camera);
-      printf("\n%d :Destroy camera", __LINE__);
+
       _camera = NULL;
       return exception(env, "Failed to send buffer to encoder output!");
     }
   }
   _paused = 0;
-  printf("\nStart: _paused=0");
+  printf("Start: _paused=0\n");
 
   return env.Undefined();
 }
@@ -350,7 +336,7 @@ Napi::Value RaspberryPiCamera::IsPaused(const Napi::CallbackInfo &info)
     return Napi::Boolean::New(env, true); // Yes, it paused, or rather not initialised, so it's def not running
 
   Napi::HandleScope scope(env);
-  printf("\nIsPaused %d\n", _paused > 0);
+  printf("IsPaused %d\n", _paused > 0);
   return Napi::Boolean::New(env, _paused > 0);
 }
 
@@ -390,7 +376,7 @@ Napi::Value RaspberryPiCamera::Pause(const Napi::CallbackInfo &info)
     return exception(env, "Pause: Camera not active");
 
   _paused = 1;
-  printf("\nPause: _paused=1");
+  printf("Pause: _paused=1\n");
 
   int result;
   if ((result = mmal_port_parameter_set_boolean(_camera->output[0], MMAL_PARAMETER_CAPTURE, MMAL_FALSE)) != MMAL_SUCCESS)
@@ -407,7 +393,7 @@ Napi::Value RaspberryPiCamera::Resume(const Napi::CallbackInfo &info)
     return exception(env, "Resume: amera not active");
 
   _paused = 0;
-  printf("\nSResume: _paused=0");
+  printf("Resume: _paused=0\n");
 
   int result;
   if ((result = mmal_port_parameter_set_boolean(_camera->output[0], MMAL_PARAMETER_CAPTURE, MMAL_TRUE)) != MMAL_SUCCESS)
@@ -424,7 +410,7 @@ Napi::Value RaspberryPiCamera::Stop(const Napi::CallbackInfo &info)
   if (!_isActive())
     return exception(env, "Stop: Camera not active");
 
-  printf("\nStop: _paused=1");
+  printf("Stop: _paused=1\n");
   _paused = 1;
 
   mmal_port_disable(_encoder->output[0]);
@@ -434,7 +420,7 @@ Napi::Value RaspberryPiCamera::Stop(const Napi::CallbackInfo &info)
   mmal_component_disable(_camera);
   mmal_component_destroy(_encoder);
   mmal_component_destroy(_camera);
-  printf("\n%d :Destroy camera", __LINE__);
+
   _camera = NULL;
 
   uv_close((uv_handle_t *)this->_asyncHandle, (uv_close_cb)RaspberryPiCamera::AsyncCloseCallback);
@@ -444,12 +430,12 @@ Napi::Value RaspberryPiCamera::Stop(const Napi::CallbackInfo &info)
   {
     MMAL_BUFFER_HEADER_T *buffer = this->_bufferQueue.front();
     this->_bufferQueue.pop();
-    printf("\nStop buffer %d %d\n", _paused, buffer->length);
+    printf("Stop buffer %d %d\n", _paused, buffer->length);
     mmal_port_send_buffer(_encoder->output[0], buffer);
   }
 
   uv_mutex_destroy(&this->_bufferQueueMutex);
-  printf("\nStop: _paused=0");
+  printf("Stop: _paused=0\n");
   _paused = 0;
 
   return env.Undefined();
@@ -473,7 +459,7 @@ void RaspberryPiCamera::_processBufferQueue()
     this->_bufferQueue.pop();
 
     Napi::Buffer<uint8_t> data = Napi::Buffer<uint8_t>::Copy(env, (uint8_t *)(buffer->data + buffer->offset), buffer->length);
-    printf("buffer %d %d\r", _paused, buffer->length);
+    //printf("buffer %d %d\r", _paused, buffer->length);
     if (!_paused)
     {
       this->_dataCallback.MakeCallback(env.Global(), {data});
