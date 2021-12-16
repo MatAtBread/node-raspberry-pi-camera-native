@@ -15,15 +15,17 @@ Napi::FunctionReference RaspberryPiCamera::constructor;
 #define _PRINTF(...)
 #endif
 
-static Napi::Value exception(Napi::Env env, std::string message, int result)
+static Napi::Value exception(Napi::Env env, std::string message, int result, int param)
 {
-  printf("RaspberryPiCamera: Exception: %s %d\n", message.c_str(), result);
+  printf("RaspberryPiCamera: Exception: %s [%d,%d]\n", message.c_str(), result, param);
   Napi::TypeError::New(env, message).ThrowAsJavaScriptException();
   return env.Undefined();
 }
 static Napi::Value exception(Napi::Env env, std::string message)
 {
-  return exception(env, message, 0);
+  printf("RaspberryPiCamera: Exception: %s\n", message.c_str());
+  Napi::TypeError::New(env, message).ThrowAsJavaScriptException();
+  return env.Undefined();
 }
 
 Napi::Object RaspberryPiCamera::Init(Napi::Env env, Napi::Object exports)
@@ -59,6 +61,7 @@ RaspberryPiCamera::RaspberryPiCamera(const Napi::CallbackInfo &info) : Napi::Obj
 
 Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
 {
+  int result;
   Napi::Env env = info.Env();
   if (_isActive())
     return exception(env, "Camera already active");
@@ -72,6 +75,8 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
   _fps = 30;
   _encoding = MMAL_ENCODING_JPEG;
   _quality = 75;
+  _rotation = 0;
+  _mirror = 0;
   _paused = 0;
 
   if (length > 0 && info[0].IsObject())
@@ -108,6 +113,15 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
     if (options.Has("quality") && options.Get("quality").IsNumber())
     {
       _quality = options.Get("quality").ToNumber().Int32Value();
+    }
+
+    if (options.Has("rotation") && options.Get("rotation").IsNumber())
+    {
+      _rotation = options.Get("rotation").ToNumber().Int32Value();
+    }
+    if (options.Has("mirror") && options.Get("mirror").IsNumber())
+    {
+      _mirror = options.Get("mirror").ToNumber().Int32Value();
     }
   }
 
@@ -227,6 +241,24 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
     _camera = NULL;
     return exception(env, "Failed to set encoder JPEG quality factor!");
   }
+
+  /*if ((result = mmal_port_parameter_set_uint32(_encoder->output[0], MMAL_PARAMETER_ROTATION, _rotation)) != MMAL_SUCCESS)
+  {
+    mmal_component_disable(_camera);
+    mmal_component_destroy(_encoder);
+    mmal_component_destroy(_camera);
+    _camera = NULL;
+    return exception(env, "Failed to set encoder rotation!", result, _rotation);
+  }*/
+
+  /*if ((result = mmal_port_parameter_set_uint32(_encoder->output[0], MMAL_PARAMETER_MIRROR, _mirror)) != MMAL_SUCCESS)
+  {
+    mmal_component_disable(_camera);
+    mmal_component_destroy(_encoder);
+    mmal_component_destroy(_camera);
+    _camera = NULL;
+    return exception(env, "Failed to set encoder mirror!", result, _mirror);
+  }*/
 
   if (mmal_port_parameter_set_uint32(_encoder->output[0], MMAL_PARAMETER_JPEG_RESTART_INTERVAL, 0) != MMAL_SUCCESS)
   {
@@ -348,6 +380,7 @@ Napi::Value RaspberryPiCamera::IsPaused(const Napi::CallbackInfo &info)
 
 Napi::Value RaspberryPiCamera::SetConfig(const Napi::CallbackInfo &info)
 {
+  int result;
   Napi::Env env = info.Env();
   if (!_isActive())
     return exception(env, "SetConfig: Camera not active");
@@ -355,8 +388,6 @@ Napi::Value RaspberryPiCamera::SetConfig(const Napi::CallbackInfo &info)
   Napi::HandleScope scope(env);
 
   int length = info.Length();
-
-  _quality = 75;
 
   if (length > 0 && info[0].IsObject())
   {
@@ -369,6 +400,26 @@ Napi::Value RaspberryPiCamera::SetConfig(const Napi::CallbackInfo &info)
       if (mmal_port_parameter_set_uint32(_encoder->output[0], MMAL_PARAMETER_JPEG_Q_FACTOR, _quality) != MMAL_SUCCESS)
       {
         return exception(env, "Failed to set encoder JPEG quality factor!");
+      }
+    }
+
+    /*if (options.Has("rotation") && options.Get("rotation").IsNumber())
+    {
+      _rotation = options.Get("rotation").ToNumber().Int32Value();
+
+      if ((result = mmal_port_parameter_set_uint32(_encoder->output[0], MMAL_PARAMETER_ROTATION, _rotation)) != MMAL_SUCCESS)
+      {
+        return exception(env, "Failed to set encoder rotation!", result, _rotation);
+      }
+    }*/
+
+    if (options.Has("mirror") && options.Get("mirror").IsNumber())
+    {
+      _mirror = options.Get("mirror").ToNumber().Int32Value();
+
+      if ((result = mmal_port_parameter_set_uint32(_encoder->output[0], MMAL_PARAMETER_MIRROR, _mirror)) != MMAL_SUCCESS)
+      {
+        return exception(env, "Failed to set encoder mirror!", result, _mirror);
       }
     }
   }
@@ -387,7 +438,7 @@ Napi::Value RaspberryPiCamera::Pause(const Napi::CallbackInfo &info)
   int result;
   if ((result = mmal_port_parameter_set_boolean(_camera->output[0], MMAL_PARAMETER_CAPTURE, MMAL_FALSE)) != MMAL_SUCCESS)
   {
-    return exception(env, "Failed to disable camera capture! ", result);
+    return exception(env, "Failed to disable camera capture! ", result, MMAL_FALSE);
   }
   return env.Undefined();
 }
@@ -404,7 +455,7 @@ Napi::Value RaspberryPiCamera::Resume(const Napi::CallbackInfo &info)
   int result;
   if ((result = mmal_port_parameter_set_boolean(_camera->output[0], MMAL_PARAMETER_CAPTURE, MMAL_TRUE)) != MMAL_SUCCESS)
   {
-    return exception(env, "Failed to enable camera capture! ", result);
+    return exception(env, "Failed to enable camera capture! ", result, MMAL_TRUE);
   }
 
   return env.Undefined();

@@ -20,7 +20,8 @@ interface CameraOptions {
   height: number,
   fps: number,
   encoding: string,
-  quality: number
+  quality: number,
+  rotation: number
 }
 
 declare const _def: RaspberryPiCamera;

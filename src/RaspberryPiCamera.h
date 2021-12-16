@@ -45,6 +45,8 @@ private:
   int _fps;
   MMAL_FOURCC_T _encoding;
   int _quality;
+  int _rotation;
+  int _mirror;
   int _paused;
 
   uv_async_t* _asyncHandle;
