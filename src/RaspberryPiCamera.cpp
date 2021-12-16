@@ -32,7 +32,14 @@ Napi::Object RaspberryPiCamera::Init(Napi::Env env, Napi::Object exports)
 {
   Napi::HandleScope scope(env);
 
-  Napi::Function func = DefineClass(env, "RaspberryPiCamera", {InstanceMethod("start", &RaspberryPiCamera::Start), InstanceMethod("isPaused", &RaspberryPiCamera::IsPaused), InstanceMethod("setConfig", &RaspberryPiCamera::SetConfig), InstanceMethod("pause", &RaspberryPiCamera::Pause), InstanceMethod("resume", &RaspberryPiCamera::Resume), InstanceMethod("stop", &RaspberryPiCamera::Stop)});
+  Napi::Function func = DefineClass(env, "RaspberryPiCamera", {
+    InstanceMethod("start", &RaspberryPiCamera::Start), 
+    InstanceMethod("isPaused", &RaspberryPiCamera::IsPaused), 
+    InstanceMethod("setConfig", &RaspberryPiCamera::SetConfig), 
+    InstanceMethod("pause", &RaspberryPiCamera::Pause), 
+    InstanceMethod("resume", &RaspberryPiCamera::Resume), 
+    InstanceMethod("stop", &RaspberryPiCamera::Stop)
+  });
 
   constructor = Napi::Persistent(func);
   constructor.SuppressDestruct();
