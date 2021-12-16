@@ -242,14 +242,18 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
     return exception(env, "Failed to set encoder JPEG quality factor!");
   }
 
-  /*if ((result = mmal_port_parameter_set_uint32(_encoder->output[0], MMAL_PARAMETER_ROTATION, _rotation)) != MMAL_SUCCESS)
+  if ((result = mmal_port_parameter_set_uint32(_camera->output[0], MMAL_PARAMETER_ROTATION, _rotation)) != MMAL_SUCCESS)
   {
+    // For now, just log this
+    printf("Start::Failed to set encoder rotation! [%d,%d]", result, _rotation);
+/*
     mmal_component_disable(_camera);
     mmal_component_destroy(_encoder);
     mmal_component_destroy(_camera);
     _camera = NULL;
     return exception(env, "Failed to set encoder rotation!", result, _rotation);
-  }*/
+*/    
+  }
 
   MMAL_PARAMETER_MIRROR_T mirror = {{MMAL_PARAMETER_MIRROR, sizeof(MMAL_PARAMETER_MIRROR_T)}, _mirror};
   if ((result = mmal_port_parameter_set(_camera->output[0], &mirror.hdr)) != MMAL_SUCCESS)
@@ -404,15 +408,15 @@ Napi::Value RaspberryPiCamera::SetConfig(const Napi::CallbackInfo &info)
       }
     }
 
-    /*if (options.Has("rotation") && options.Get("rotation").IsNumber())
+    if (options.Has("rotation") && options.Get("rotation").IsNumber())
     {
       _rotation = options.Get("rotation").ToNumber().Int32Value();
 
-      if ((result = mmal_port_parameter_set_uint32(_encoder->output[0], MMAL_PARAMETER_ROTATION, _rotation)) != MMAL_SUCCESS)
+      if ((result = mmal_port_parameter_set_uint32(_camera->output[0], MMAL_PARAMETER_ROTATION, _rotation)) != MMAL_SUCCESS)
       {
         return exception(env, "Failed to set encoder rotation!", result, _rotation);
       }
-    }*/
+    }
 
     if (options.Has("mirror") && options.Get("mirror").IsNumber())
     {

@@ -28,7 +28,7 @@ export interface CameraOptions {
   fps: number,
   encoding: string,
   quality: number,
-  rotation: number,
+  rotation: 0 | 90 | 180 | 270,
   mirror: Mirror
 }
 
