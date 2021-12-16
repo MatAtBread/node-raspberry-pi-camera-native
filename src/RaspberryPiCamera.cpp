@@ -76,7 +76,7 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
   _encoding = MMAL_ENCODING_JPEG;
   _quality = 75;
   _rotation = 0;
-  _mirror = 0;
+  _mirror = MMAL_PARAM_MIRROR_NONE;
   _paused = 0;
 
   if (length > 0 && info[0].IsObject())
@@ -121,7 +121,7 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
     }
     if (options.Has("mirror") && options.Get("mirror").IsNumber())
     {
-      _mirror = options.Get("mirror").ToNumber().Int32Value();
+      _mirror = (MMAL_PARAM_MIRROR_T)options.Get("mirror").ToNumber().Int32Value();
     }
   }
 
@@ -251,14 +251,15 @@ Napi::Value RaspberryPiCamera::Start(const Napi::CallbackInfo &info)
     return exception(env, "Failed to set encoder rotation!", result, _rotation);
   }*/
 
-  /*if ((result = mmal_port_parameter_set_uint32(_encoder->output[0], MMAL_PARAMETER_MIRROR, _mirror)) != MMAL_SUCCESS)
+  MMAL_PARAMETER_MIRROR_T mirror = {{MMAL_PARAMETER_MIRROR, sizeof(MMAL_PARAMETER_MIRROR_T)}, _mirror};
+  if ((result = mmal_port_parameter_set(_camera->output[0], &mirror.hdr)) != MMAL_SUCCESS)
   {
     mmal_component_disable(_camera);
     mmal_component_destroy(_encoder);
     mmal_component_destroy(_camera);
     _camera = NULL;
     return exception(env, "Failed to set encoder mirror!", result, _mirror);
-  }*/
+  }
 
   if (mmal_port_parameter_set_uint32(_encoder->output[0], MMAL_PARAMETER_JPEG_RESTART_INTERVAL, 0) != MMAL_SUCCESS)
   {
@@ -415,9 +416,8 @@ Napi::Value RaspberryPiCamera::SetConfig(const Napi::CallbackInfo &info)
 
     if (options.Has("mirror") && options.Get("mirror").IsNumber())
     {
-      _mirror = options.Get("mirror").ToNumber().Int32Value();
-
-      if ((result = mmal_port_parameter_set_uint32(_encoder->output[0], MMAL_PARAMETER_MIRROR, _mirror)) != MMAL_SUCCESS)
+      MMAL_PARAMETER_MIRROR_T mirror = {{MMAL_PARAMETER_MIRROR, sizeof(MMAL_PARAMETER_MIRROR_T)}, _mirror};
+      if ((result = mmal_port_parameter_set(_camera->output[0], &mirror.hdr)) != MMAL_SUCCESS)
       {
         return exception(env, "Failed to set encoder mirror!", result, _mirror);
       }

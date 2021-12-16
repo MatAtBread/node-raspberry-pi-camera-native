@@ -15,13 +15,21 @@ interface RaspberryPiCamera extends EventEmitter {
   once(event: 'frame', listener: (frame:Buffer) => void): this;
 }
 
-interface CameraOptions {
+export enum Mirror {
+  NONE = 0,
+  VERT = 1,
+  HORZ = 2,
+  BOTH = 3  
+}
+
+export interface CameraOptions {
   width: number,
   height: number,
   fps: number,
   encoding: string,
   quality: number,
-  rotation: number
+  rotation: number,
+  mirror: Mirror
 }
 
 declare const _def: RaspberryPiCamera;
