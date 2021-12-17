@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/MatAtBread/node-raspberry-pi-camera-native.git"
+    "url": "https://github.com/MatAtBread/pi-camera-native.git"
   },
   "keywords": [
     "Raspberry Pi",
@@ -21,9 +21,9 @@
   "author": "MatAtBread",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/MatAtBread/node-raspberry-pi-camera-native/issues"
+    "url": "https://github.com/MatAtBread/pi-camera-native/issues"
   },
-  "homepage": "https://github.com/MatAtBread/node-raspberry-pi-camera-native",
+  "homepage": "https://github.com/MatAtBread/pi-camera-native",
   "dependencies": {
     "bindings": "^1.5.0",
     "node-addon-api": "^4.2.0"
