@@ -8,6 +8,7 @@ interface RaspberryPiCamera extends EventEmitter {
   resume(): Promise<void>; // Note: the preview stream can't be paused or resumed. Use start and stop
 
   get running(): boolean;
+  lastFrame(): Buffer | undefined;
   nextFrame(): Promise<Buffer>;
 
   // Overloads EventEmitter
