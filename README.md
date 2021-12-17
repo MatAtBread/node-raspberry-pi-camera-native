@@ -1,4 +1,4 @@
-# node-raspberry-pi-camera-native
+# pi-camera-native
 
 - Forked to fix errors/crashes to do with buffer recycling (esp. on stop), re-entrancy, menory-leak fixes and expand the API
 - Includes Typescript type definitions
@@ -24,7 +24,7 @@ Use your [Raspberry Pi Camera Module](https://www.raspberrypi.org/documentation/
 npm install pi-camera-native-ts --only=prod 
 ```
 
-`npm install pi-camera-native-ts` will also install development dependencies, but you're probably better off with `git clone https://github.com/MatAtBread/node-raspberry-pi-camera-native.git && cd node-raspberry-pi-camera-native && npm i`
+`npm install pi-camera-native-ts` will also install development dependencies, but you're probably better off with `git clone https://github.com/MatAtBread/pi-camera-native.git && cd pi-camera-native && npm i`
 
 
 ## Usage
